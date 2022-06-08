@@ -94,6 +94,15 @@ func (dateTime *DateTime) StartTimeOfDay() *DateTime {
 	return dateTime
 }
 
+// StartOfMinute beginning of minute
+func (dateTime *DateTime) StartOfMinute() *DateTime {
+	if dateTime.t.IsZero() {
+		dateTime.t = time.Now()
+	}
+	dateTime.t = dateTime.t.Truncate(time.Minute)
+	return dateTime
+}
+
 // StartOfWeek Weekly start time
 func (dateTime *DateTime) StartOfWeek() *DateTime {
 	if dateTime.t.IsZero() {
@@ -135,5 +144,29 @@ func (dateTime *DateTime) SetWeekStartDay(weekday common.Weekday) *DateTime {
 		weekday = common.Sunday
 	}
 	dateTime.weekStartDay = weekday
+	return dateTime
+}
+
+// StartOfQuarter Start time of current quarter
+func (dateTime *DateTime) StartOfQuarter() *DateTime {
+	month := dateTime.StartOfMonth()
+	offset := (int(month.t.Month()) - 1) % 3
+	dateTime.t = month.t.AddDate(0, -offset, 0)
+	return dateTime
+}
+
+// StartOfYear Start time of current year
+func (dateTime *DateTime) StartOfYear() *DateTime {
+	if dateTime.t.IsZero() {
+		dateTime.t = time.Now()
+	}
+	y, _, _ := dateTime.t.Date()
+	dateTime.t = time.Date(y, time.January, 1, 0, 0, 0, 0, dateTime.t.Location())
+	return dateTime
+}
+
+// EndOfMinute end of minute
+func (dateTime *DateTime) EndOfMinute() *DateTime {
+	dateTime.t = dateTime.StartOfMinute().t.Add(time.Minute - time.Nanosecond)
 	return dateTime
 }
