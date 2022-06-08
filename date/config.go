@@ -6,12 +6,16 @@
 package date
 
 import (
+	"github.com/druidcaesa/ztool/common"
 	"strings"
 	"time"
 )
 
+var weekStartDay = common.Sunday
+
 type DateTime struct {
-	t time.Time
+	t            time.Time
+	weekStartDay common.Weekday
 }
 
 const (
