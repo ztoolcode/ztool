@@ -83,6 +83,16 @@ func (dateTime *DateTime) OperationYears(num int) *DateTime {
 	return dateTime
 }
 
+//StartOfHour start of hour
+func (dateTime *DateTime) StartOfHour() *DateTime {
+	if dateTime.t.IsZero() {
+		dateTime.t = time.Now()
+	}
+	y, m, d := dateTime.t.Date()
+	dateTime.t = time.Date(y, m, d, dateTime.t.Hour(), 0, 0, 0, dateTime.t.Location())
+	return dateTime
+}
+
 // StartTimeOfDay start time of day
 // This method can get the start time of the day, which is year:month:day 00:00:00
 func (dateTime *DateTime) StartTimeOfDay() *DateTime {
@@ -169,4 +179,121 @@ func (dateTime *DateTime) StartOfYear() *DateTime {
 func (dateTime *DateTime) EndOfMinute() *DateTime {
 	dateTime.t = dateTime.StartOfMinute().t.Add(time.Minute - time.Nanosecond)
 	return dateTime
+}
+
+//EndOfHour end of hour
+func (dateTime *DateTime) EndOfHour() *DateTime {
+	dateTime.StartOfHour().t.Add(time.Hour - time.Nanosecond)
+	return dateTime
+}
+
+// StartOfHalf beginning of half year
+func (dateTime *DateTime) StartOfHalf() *DateTime {
+	month := dateTime.StartOfMonth()
+	offset := (int(month.t.Month()) - 1) % 6
+	dateTime.t = month.t.AddDate(0, -offset, 0)
+	return dateTime
+}
+
+//EndOfDay end of day
+func (dateTime *DateTime) EndOfDay() *DateTime {
+	if dateTime.t.IsZero() {
+		dateTime.t = time.Now()
+	}
+	y, m, d := dateTime.t.Date()
+	dateTime.t = time.Date(y, m, d, 23, 59, 59, int(time.Second-time.Nanosecond), dateTime.t.Location())
+	return dateTime
+}
+
+//EndOfWeek end of week
+func (dateTime *DateTime) EndOfWeek() *DateTime {
+	dateTime.t = dateTime.StartOfWeek().t.AddDate(0, 0, 7).Add(-time.Nanosecond)
+	return dateTime
+}
+
+// EndOfMonth end of month
+func (dateTime *DateTime) EndOfMonth() *DateTime {
+	dateTime.t = dateTime.StartOfMonth().t.AddDate(0, 1, 0).Add(-time.Nanosecond)
+	return dateTime
+}
+
+// EndOfQuarter end of quarter
+func (dateTime *DateTime) EndOfQuarter() *DateTime {
+	dateTime.t = dateTime.StartOfQuarter().t.AddDate(0, 3, 0).Add(-time.Nanosecond)
+	return dateTime
+}
+
+// EndOfHalf end of half year
+func (dateTime *DateTime) EndOfHalf() *DateTime {
+	dateTime.t = dateTime.StartOfHalf().t.AddDate(0, 6, 0).Add(-time.Nanosecond)
+	return dateTime
+}
+
+// EndOfYear end of year
+func (dateTime *DateTime) EndOfYear() *DateTime {
+	dateTime.t = dateTime.StartOfYear().t.AddDate(1, 0, 0).Add(-time.Nanosecond)
+	return dateTime
+}
+
+// Parse parse string to time
+func (dateTime *DateTime) Parse(strFormat ...string) (*DateTime, error) {
+	var err error
+	if dateTime.t.IsZero() {
+		dateTime.t = time.Now()
+	}
+	var (
+		setCurrentTime  bool
+		parseTime       []int
+		currentLocation = dateTime.t.Location()
+		onlyTimeInStr   = true
+		currentTime     = formatTimeToList(dateTime.t)
+	)
+
+	for _, str := range strFormat {
+		hasTimeInStr := hasTimeRegexp.MatchString(str) // match 15:04:05, 15
+		onlyTimeInStr = hasTimeInStr && onlyTimeInStr && onlyTimeRegexp.MatchString(str)
+		if t, err := dateTime.parseWithFormat(str, currentLocation); err == nil {
+			location := t.Location()
+			parseTime = formatTimeToList(t)
+
+			for i, v := range parseTime {
+				// Don't reset hour, minute, second if current time str including time
+				if hasTimeInStr && i <= 3 {
+					continue
+				}
+
+				// If value is zero, replace it with current time
+				if v == 0 {
+					if setCurrentTime {
+						parseTime[i] = currentTime[i]
+					}
+				} else {
+					setCurrentTime = true
+				}
+
+				// if current time only includes time, should change day, month to current time
+				if onlyTimeInStr {
+					if i == 4 || i == 5 {
+						parseTime[i] = currentTime[i]
+						continue
+					}
+				}
+			}
+
+			t = time.Date(parseTime[6], time.Month(parseTime[5]), parseTime[4], parseTime[3],
+				parseTime[2], parseTime[1], parseTime[0], location)
+			currentTime = formatTimeToList(t)
+			dateTime.t = t
+		}
+	}
+	return dateTime, err
+}
+
+// MustParse must parse string to time or it will panic
+func (dateTime *DateTime) MustParse(strs ...string) (d *DateTime) {
+	d, err := dateTime.Parse(strs...)
+	if err != nil {
+		panic(err)
+	}
+	return d
 }
