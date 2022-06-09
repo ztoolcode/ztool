@@ -28,6 +28,6 @@ var (
 	IdUtils id.Id
 	//StringUtils String tools
 	StringUtils str.Str
-	//People's Republic of China ID Card Verification Tool
+	// IDCardUtils People's Republic of China ID Card Verification Tool
 	IDCardUtils idcard.Idcard
 )
