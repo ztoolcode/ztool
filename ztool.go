@@ -26,8 +26,8 @@ var (
 	FileUtils file.ZFile
 	// IdUtils tool package
 	IdUtils id.Id
-	//StringUtils String tools
-	StringUtils str.Str
+	//StrUtils String tools
+	StrUtils str.Str
 	// IDCardUtils People's Republic of China ID Card Verification Tool
 	IDCardUtils idcard.Idcard
 )
