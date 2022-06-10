@@ -11,8 +11,25 @@ import (
 	"strconv"
 )
 
+// Check Perform global verification
+func (card *Idcard) Check(id string) (bool, error) {
+	//digit check
+	flag, err := card.IsValidCard(id)
+	if err != nil {
+		return flag, err
+	}
+	//Check the date
+	birth := id[6:14]
+	_, err = checkBirthdayCode(birth)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // GetProvinceByIdCard get province
 func (card *Idcard) GetProvinceByIdCard(address string) string {
+	initConfig()
 	address = address[:6]
 	provincialCode := address[:3] + "000"
 	cityCode := address[:4] + "00"

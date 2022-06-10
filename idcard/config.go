@@ -23,8 +23,8 @@ var validValue = [11]byte{'1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'}
 
 var area = make(map[string]string)
 
-// Initialize locale configuration
-func init() {
+// initConfig locale configuration
+func initConfig() {
 	c := "./area.json"
 	raw, err := ioutil.ReadFile(c)
 	err = json.Unmarshal(raw, &area)
