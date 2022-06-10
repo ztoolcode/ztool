@@ -26,7 +26,7 @@ const (
 	hour            = "15"
 	minute          = "04"
 	second          = "05"
-	complete        = "2006-01-02 15:05:05"
+	complete        = "2006-01-02 15:04:05"
 	stringToTimeOne = "2006-01-02 15:04:05"
 	stringToTimeTow = "2006-01-02"
 )
