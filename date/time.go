@@ -183,7 +183,7 @@ func (dateTime *DateTime) EndOfMinute() *DateTime {
 
 //EndOfHour end of hour
 func (dateTime *DateTime) EndOfHour() *DateTime {
-	dateTime.StartOfHour().t.Add(time.Hour - time.Nanosecond)
+	dateTime.t = dateTime.StartOfHour().t.Add(time.Hour - time.Nanosecond)
 	return dateTime
 }
 
