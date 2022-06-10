@@ -187,14 +187,6 @@ func (dateTime *DateTime) EndOfHour() *DateTime {
 	return dateTime
 }
 
-// StartOfHalf beginning of half year
-func (dateTime *DateTime) StartOfHalf() *DateTime {
-	month := dateTime.StartOfMonth()
-	offset := (int(month.t.Month()) - 1) % 6
-	dateTime.t = month.t.AddDate(0, -offset, 0)
-	return dateTime
-}
-
 //EndOfDay end of day
 func (dateTime *DateTime) EndOfDay() *DateTime {
 	if dateTime.t.IsZero() {
@@ -220,12 +212,6 @@ func (dateTime *DateTime) EndOfMonth() *DateTime {
 // EndOfQuarter end of quarter
 func (dateTime *DateTime) EndOfQuarter() *DateTime {
 	dateTime.t = dateTime.StartOfQuarter().t.AddDate(0, 3, 0).Add(-time.Nanosecond)
-	return dateTime
-}
-
-// EndOfHalf end of half year
-func (dateTime *DateTime) EndOfHalf() *DateTime {
-	dateTime.t = dateTime.StartOfHalf().t.AddDate(0, 6, 0).Add(-time.Nanosecond)
 	return dateTime
 }
 
