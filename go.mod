@@ -1,3 +1,3 @@
-module github.com/druidcaesa/ztool
+module github.com/druidcaesa/ztool 
 
 go 1.17
