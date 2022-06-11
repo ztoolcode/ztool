@@ -27,3 +27,8 @@ func TestHasBlank(t *testing.T) {
 	fmt.Printf("空字符串------->%t\n", ztool.StrUtils.HasBlank(str1))
 	fmt.Printf("正常字符串------->%t\n", ztool.StrUtils.HasBlank(str3))
 }
+
+//
+func TestHasEmpty(t *testing.T) {
+
+}
